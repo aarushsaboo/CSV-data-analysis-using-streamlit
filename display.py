@@ -42,7 +42,20 @@ def compute_correlation(dataframe, x_axis_column, y_axis_column):
     else:
         st.write("The correlation could not be calculated due to **insufficient data** or **non-numeric values.**")
 
+def filter_data(dataframe):
+    st.header('Data Filtering')
+    column = st.selectbox('Select column to filter', dataframe.columns)
+    unique_values = dataframe[column].unique()
+    filter_value = st.multiselect('Select values to include', unique_values, default=unique_values)
 
+    filtered_df = dataframe[dataframe[column].isin(filter_value)]
+    st.dataframe(filtered_df)
+    return filtered_df
+
+def export_data(filtered_df):
+    st.header('Export Filtered Data')
+    csv = filtered_df.to_csv(index=False)
+    st.download_button(label='Download CSV', data=csv, file_name='filtered_data.csv', mime='text/csv')
 
 st.title('CSV Data analysis tool')
 
@@ -57,7 +70,7 @@ if csv_file != None:
     st.markdown('## **Options**')
     st.markdown('*Choose an option below to interact with the data*')
 
-    choice = st.radio('Choose an option', ('View dataframe', 'Display charts', 'Calculate correlation', 'Summary Statistics'))
+    choice = st.radio('Choose an option', ('View dataframe', 'Display charts', 'Calculate correlation', 'Filter data'))
 
     st.markdown('---')
 
@@ -78,11 +91,11 @@ if csv_file != None:
         x_axis_column = st.selectbox('Select the first column', dataframe.columns)
         y_axis_column = st.selectbox('Select the second column', dataframe.columns )
         compute_correlation(dataframe, x_axis_column, y_axis_column)
-
-    elif choice == 'Summary statistics':
-        st.header('Summary Statistics')
-        st.write(dataframe.describe())
-
+    
+    elif choice == 'Filter data':
+        filtered_df = filter_data(dataframe)
+        if(st.checkbox('Export filtered data')):
+            export_data(filtered_df)
 
 else:
     st.info('Please upload a CSV file to get started')

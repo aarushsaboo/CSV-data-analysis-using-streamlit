@@ -57,7 +57,7 @@ if csv_file != None:
     st.markdown('## **Options**')
     st.markdown('*Choose an option below to interact with the data*')
 
-    choice = st.radio('Choose an option', ('View dataframe', 'Display charts', 'Calculate correlation'))
+    choice = st.radio('Choose an option', ('View dataframe', 'Display charts', 'Calculate correlation', 'Summary Statistics'))
 
     st.markdown('---')
 
@@ -78,6 +78,11 @@ if csv_file != None:
         x_axis_column = st.selectbox('Select the first column', dataframe.columns)
         y_axis_column = st.selectbox('Select the second column', dataframe.columns )
         compute_correlation(dataframe, x_axis_column, y_axis_column)
+
+    elif choice == 'Summary statistics':
+        st.header('Summary Statistics')
+        st.write(dataframe.describe())
+
 
 else:
     st.info('Please upload a CSV file to get started')
